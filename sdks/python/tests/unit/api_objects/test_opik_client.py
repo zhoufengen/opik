@@ -1339,3 +1339,13 @@ def test_opik_client__search_traces__exclude_defaults_to_none():
 
     mock_search.assert_called_once()
     assert mock_search.call_args.kwargs["exclude"] is None
+
+
+def test_opik_client__init__environment_forwarded_to_config():
+    client = opik_client.Opik(environment="production")
+    assert client.config.environment == "production"
+
+
+def test_opik_client__init__environment_defaults_to_none():
+    client = opik_client.Opik()
+    assert client.config.environment is None
