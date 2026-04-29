@@ -86,17 +86,22 @@ def generate_query(
     if few_shot_examples is None:
         examples_str = ""
     else:
-        examples_str = "\n\nEXAMPLES:\n\n".join(
-            [
-                f"<example>\nInput: {example['input']}\nContext: {example['context']}\n"
-                if context is not None
-                else ""
+        rendered_examples = []
+        for example in few_shot_examples:
+            if context is not None:
+                header = (
+                    f"<example>\nInput: {example['input']}\n"
+                    f"Context: {example['context']}\n"
+                )
+            else:
+                header = f"<example>\nInput: {example['input']}\n"
+            body = (
                 f"Output: {example['output']}\n\n"
                 f'{{"score": "{example["score"]}", "reason": "{example["reason"]}"}}\n'
                 f"</example>"
-                for i, example in enumerate(few_shot_examples)
-            ]
-        )
+            )
+            rendered_examples.append(header + body)
+        examples_str = "\n\nEXAMPLES:\n\n".join(rendered_examples)
 
     if context is not None:
         return context_hallucination_template.format(
